@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+management:
+  endpoint.gateway.enabled: true
+  endpoints.web.exposure.include: gateway
+
+spring:
+  application.name: microservice-gateway
+  cloud:
+    gateway:
+      discovery.locator.enabled: true
+      routes:
+        - id: service-user-id
+          uri: lb://user-service
+          predicates:
+            Path=/api/v1/user/**
+#          filters:
+#            - AuthFilter
+
+        - id: service-host-id
+          uri: lb://host-service
+          predicates:
+            Path=/api/v1/host/**
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
