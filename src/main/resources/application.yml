@@ -15,13 +15,21 @@ spring:
           uri: lb://user-service
           predicates:
             Path=/api/v1/user/**
+
 #          filters:
 #            - AuthFilter
-
+#        - id: service-user-filter
+#          uri: lb://user-service
+#          predicates:
+#            Path=/api/v1/user/test
+#          filters:
+#            - AuthFilter
         - id: service-host-id
           uri: lb://host-service
           predicates:
             Path=/api/v1/host/**
+          filters:
+            - AuthFilter
 
 eureka:
   client:
