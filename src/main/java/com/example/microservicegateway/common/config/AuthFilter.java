@@ -4,6 +4,7 @@ import com.example.microservicegateway.dto.UserDto;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 @Component
@@ -23,7 +24,10 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
             return (exchange,chain)->{
 
                 if( !exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)){
-                    throw new RuntimeException("Missing authorization information");
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+//                    throw new RuntimeException("Missing authorization information");
+                    return exchange.getResponse().setComplete();
+
                 }
 
                 String authHeader= exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
@@ -33,7 +37,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
                 }
                 return webClientBuilder.build()
                         .post()
-                        .uri("http://user-service/user/validate?token="+parts[1])
+                        .uri("http://USER-SERVICE/api/v1/user/validate?token="+parts[1])
                         .retrieve().bodyToMono(UserDto.class).map(userDto -> {
                             exchange.getRequest()
                                     .mutate()
