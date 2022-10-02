@@ -42,6 +42,8 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
                             exchange.getRequest()
                                     .mutate()
                                     .header("X-auth-user-id", String.valueOf(userDto.getId()));
+                            exchange.getRequest().mutate().header("Role",userDto.getRole());
+                            exchange.getRequest().mutate().header("UUID",userDto.getId().toString());
                             return exchange;
                         }).flatMap(chain::filter);
 
