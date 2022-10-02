@@ -9,6 +9,13 @@ spring:
   application.name: microservice-gateway
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins:
+              - "http://localhost:3000"
+            allowed-methods: "*"
+            allowed-headers: "*"
       discovery.locator.enabled: true
       routes:
         - id: service-user-id
@@ -30,6 +37,7 @@ spring:
             Path=/api/v1/host/**
           filters:
             - AuthFilter
+
 
 eureka:
   client:
