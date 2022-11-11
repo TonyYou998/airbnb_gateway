@@ -1,6 +1,8 @@
 package com.example.microservicegateway.common.config;
 
 import com.example.microservicegateway.dto.UserDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
@@ -10,7 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Component
 public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
     private final WebClient.Builder webClientBuilder;
-
+    private final Logger LOGGER= LoggerFactory.getLogger(AuthFilter.class);
     public AuthFilter(WebClient.Builder webClientBuilder) {
         super(Config.class);
 
@@ -31,6 +33,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
                 }
 
                 String authHeader= exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+                LOGGER.info(authHeader);
                 String [] parts=authHeader.split(" ");
                 if (parts.length != 2 || !"Bearer".equals(parts[0])) {
                     throw new RuntimeException("Incorrect authorization structure");
