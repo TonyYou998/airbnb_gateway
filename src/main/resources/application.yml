@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+management:
+  endpoint.gateway.enabled: true
+  endpoints.web.exposure.include: gateway
+
+spring:
+  application.name: microservice-gateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins:
+              - "http://localhost:3000"
+            allowed-methods: "*"
+            allowed-headers: "*"
+      discovery.locator.enabled: true
+      routes:
+        - id: service-user-id
+          uri: lb://user-service
+          predicates:
+            Path=/api/v1/user/**
+        - id: service-booking-id
+          uri: lb://booking-service
+          predicates:
+            - Path=/api/v1/booking/**
+        - id: service-host-id
+          uri: lb://host-service
+          predicates:
+            Path=/api/v1/host/**
+          filters:
+            - AuthFilter
+
+
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
